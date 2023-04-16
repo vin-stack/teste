@@ -25,22 +25,24 @@ st.write(words)
 print("Filtered Words: ", filtered_words)
 st.write(filtered_words)
 
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+import nltk
+from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
+
+# Load NLTK's stop words
+stop_words = set(stopwords.words('english'))
 
 # Function to preprocess text data
 def preprocess_text(text):
     # Tokenize into sentences
-    sentences = text.split('.')
+    sentences = nltk.sent_tokenize(text)
     # Tokenize sentences into words
-    words = [sent.split() for sent in sentences]
+    words = [nltk.word_tokenize(sent) for sent in sentences]
     # Convert words to lowercase
     words = [[word.lower() for word in sent if word.isalpha()] for sent in words]
     # Remove stopwords
-    words = [[word for word in sent if word not in ENGLISH_STOP_WORDS] for sent in words]
+    words = [[word for word in sent if word not in stop_words] for sent in words]
     return words
 
 # Function to compute sentence similarity using cosine similarity
@@ -61,6 +63,12 @@ def similarity_matrix(sentences, vectorizer):
         similarity_matrix.append(similarity_row)
     return similarity_matrix
 
+# Function to calculate semantic similarity using fuzzywuzzy
+def semantic_similarity(sent1, sent2):
+    from fuzzywuzzy import fuzz
+    similarity_score = fuzz.ratio(sent1, sent2) / 100
+    return similarity_score
+
 # Function to perform extractive summarization
 def extractive_summarization(text, num_sentences=3):
     sentences = preprocess_text(text)
@@ -68,7 +76,9 @@ def extractive_summarization(text, num_sentences=3):
     vectorizer = TfidfVectorizer()
     sentence_vectors = vectorizer.fit_transform(sentences)
     sentence_similarity_matrix = similarity_matrix(sentences, vectorizer)
-    sentence_similarity_scores = [sum(row) for row in sentence_similarity_matrix]
+    semantic_similarity_scores = [[semantic_similarity(sentences[i], sentences[j]) for j in range(len(sentences))] for i in range(len(sentences))]
+    sentence_similarity_scores = [[sentence_similarity_matrix[i][j] * semantic_similarity_scores[i][j] for j in range(len(sentences))] for i in range(len(sentences))]
+    sentence_similarity_scores = [sum(row) for row in sentence_similarity_scores]
     sorted_indices = sorted(range(len(sentence_similarity_scores)), key=lambda k: sentence_similarity_scores[k], reverse=True)
     selected_indices = sorted_indices[:num_sentences]
     selected_sentences = [sentences[i] for i in selected_indices]
@@ -76,7 +86,7 @@ def extractive_summarization(text, num_sentences=3):
     return summary
 
 # Example usage
-text = "Streamlit is a software company offering an open-source platform for machine learning and data science teams to create data applications with python that is headquartered in San Francisco, California and was founded in 2018 by Adrien Treuille, Amanda Kelly, and Thiago Teixeira. The platform uses python scripting, APIs, widgets, instant deployment, team collaboration tools, and application management solutions to help data scientists and machine learning engineers create python-based applications. Applications created using Streamlit range from applications capable of real time object detection, geographic data browsers, deep dream network debuggers, to face-GAN explorers. Frameworks compatible with Streamlit include: Scikit Learn, Altair, Bokeh, latex, Keras, Plotly, OpenCV, Vega-Lite, PyTorch, NumPy, Seaborn, Deck.GL, TensorFlow, Python, Matplotlib, and Pandas."
+text = "Centurion University of Technology and Management is a multi-sector, private state university from Odisha, India. With its main campus earlier at Parlakhemundi in the Gajapati and another constituent campus located at Jatni, on the fringes of Bhubaneswar,which is now as main campus & it was accorded the status of a university in the year 2010"
 summary = extractive_summarization(text)
 print("Original Text:")
 print(text)
