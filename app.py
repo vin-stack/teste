@@ -77,7 +77,7 @@ def extractive_summarization(text, num_sentences=3):
     sentence_vectors = vectorizer.fit_transform(sentences)
     sentence_similarity_matrix = similarity_matrix(sentences, vectorizer)
     semantic_similarity_scores = [[semantic_similarity(sentences[i], sentences[j]) for j in range(len(sentences))] for i in range(len(sentences))]
-    sentence_similarity_scores = [[sentence_similarity_matrix[i][j] * semantic_similarity_scores[i][j] for j in range(len(sentences))] for i in range(len(sentences))]
+    sentence_similarity_scores = [[sentence_similarity_matrix[i][j] * semantic_similarity_scores[i][j] if i!=j else 0 for j in range(len(sentences))] for i in range(len(sentences))]
     sentence_similarity_scores = [sum(row) for row in sentence_similarity_scores]
     sorted_indices = sorted(range(len(sentence_similarity_scores)), key=lambda k: sentence_similarity_scores[k], reverse=True)
     selected_indices = sorted_indices[:num_sentences]
@@ -86,12 +86,14 @@ def extractive_summarization(text, num_sentences=3):
     return summary
 
 # Example usage
-text = "Centurion University of Technology and Management is a multi-sector, private state university from Odisha"
+text = "Centurion University of Technology and Management is a multi-sector, private state university from Odisha, India. With its main campus earlier at Parlakhemundi in the Gajapati and another constituent campus located at Jatni, on the fringes of Bhubaneswar,which is now as main campus & it was accorded the status of a university in the year 2010"
 summary = extractive_summarization(text)
 print("Original Text:")
 print(text)
-st.write(text)
 print("\nSummary:")
 print(summary)
+
+st.write(text)
+
 st.write(summary)
 
