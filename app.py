@@ -76,7 +76,7 @@ def extractive_summarization(text, num_sentences=3):
     return summary
 
 # Example usage
-text = "Centurion University of Technology and Management is a multi-sector, private state university from Odisha, India. With its main campus earlier at Parlakhemundi in the Gajapati and another constituent campus located at Jatni, on the fringes of Bhubaneswar,which is now as main campus & it was accorded the status of a university in the year 2010"
+text = "Streamlit is a software company offering an open-source platform for machine learning and data science teams to create data applications with python that is headquartered in San Francisco, California and was founded in 2018 by Adrien Treuille, Amanda Kelly, and Thiago Teixeira. The platform uses python scripting, APIs, widgets, instant deployment, team collaboration tools, and application management solutions to help data scientists and machine learning engineers create python-based applications. Applications created using Streamlit range from applications capable of real time object detection, geographic data browsers, deep dream network debuggers, to face-GAN explorers. Frameworks compatible with Streamlit include: Scikit Learn, Altair, Bokeh, latex, Keras, Plotly, OpenCV, Vega-Lite, PyTorch, NumPy, Seaborn, Deck.GL, TensorFlow, Python, Matplotlib, and Pandas."
 summary = extractive_summarization(text)
 print("Original Text:")
 print(text)
