@@ -86,7 +86,7 @@ def extractive_summarization(text, num_sentences=3):
     return summary
 
 # Example usage
-text = "Centurion University of Technology and Management is a multi-sector, private state university from Odisha, India. With its main campus earlier at Parlakhemundi in the Gajapati and another constituent campus located at Jatni, on the fringes of Bhubaneswar,which is now as main campus & it was accorded the status of a university in the year 2010"
+text = "Centurion University of Technology and Management is a multi-sector, private state university from Odisha, India. With its main campus earlier at Parlakhemundi in the Gajapati and another constituent campus located at Jatni, on the fringes of Bhubaneswar"
 summary = extractive_summarization(text)
 print("Original Text:")
 print(text)
